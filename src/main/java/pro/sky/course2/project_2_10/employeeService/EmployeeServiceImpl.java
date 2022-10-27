@@ -13,14 +13,24 @@ import java.util.Optional;
     public class EmployeeServiceImpl implements EmployeeService {
         protected final List<Employee> employees;
 
-    public EmployeeServiceImpl(List<Employee> employees) {
+        private final ValidatorService validatorService;
+
+    public EmployeeServiceImpl(List<Employee> employees, ValidatorService validatorService) {
         this.employees = employees;
+        this.validatorService = validatorService;
     }
 
 
     @Override
-        public Employee addEmployee(String firstName, String lastName, int office, int salary) {
-            Employee employee = new Employee(firstName, lastName, office, salary);
+        public Employee addEmployee(String firstName,
+                                    String lastName,
+                                    int office,
+                                    int salary) {
+            Employee employee = new Employee(
+                    validatorService.validateFirstName(firstName),
+                    validatorService.validateLastName(lastName),
+                    office,
+                    salary);
             if (employees.contains(employee)) {
                 throw new EmployeeAlreadyAddedException();
             }
